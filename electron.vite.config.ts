@@ -13,10 +13,6 @@ export default defineConfig({
         '@shared': resolve('src/shared')
       }
     },
-    plugins: [tailwindcss(), react()],
-    test: {
-      environment: 'jsdom',
-      globals: true
-    }
+    plugins: [tailwindcss(), react()]
   }
 })
