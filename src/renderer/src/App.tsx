@@ -1,35 +1,54 @@
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
+import { useState } from 'react'
+import type { Kana, QuizResult, Screen } from '@shared/types'
+import KanaSelect from './components/KanaSelect'
+import Quiz from './components/Quiz'
+import Results from './components/Results'
 
-function App(): React.JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+export default function App() {
+  const [screen, setScreen] = useState<Screen>('select')
+  const [selectedKana, setSelectedKana] = useState<Kana[]>([])
+  const [quizResults, setQuizResults] = useState<QuizResult[]>([])
+  const [quizKey, setQuizKey] = useState(0)
 
-  return (
-    <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-        &nbsp;and <span className="ts">TypeScript</span>
-      </div>
-      <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
-        </div>
-        <div className="action">
-          <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
-          </a>
-        </div>
-      </div>
-      <Versions></Versions>
-    </>
-  )
+  function startQuiz(kana: Kana[]) {
+    setSelectedKana(kana)
+    setScreen('quiz')
+  }
+
+  function handleFinish(results: QuizResult[]) {
+    setQuizResults(results)
+    setScreen('results')
+  }
+
+  function retryQuiz() {
+    setQuizKey((k) => k + 1)
+    setScreen('quiz')
+  }
+
+  function backToSelect() {
+    setScreen('select')
+  }
+
+  if (screen === 'quiz') {
+    return (
+      <Quiz
+        key={quizKey}
+        selectedKana={selectedKana}
+        onFinish={handleFinish}
+        onBack={backToSelect}
+      />
+    )
+  }
+
+  if (screen === 'results') {
+    return (
+      <Results
+        results={quizResults}
+        onRetry={retryQuiz}
+        onBack={backToSelect}
+      />
+    )
+  }
+
+  return <KanaSelect onStart={startQuiz} />
 }
-
-export default App
