@@ -27,6 +27,13 @@ The app covers the full kana syllabary across both scripts:
 2. **Quiz screen** — One kana at a time shown large on screen. Type the romaji answer and press Enter. Instant green ✓ / red ✗ feedback appears, with the correct answer shown on a miss. Press Enter again (or click Next) to advance.
 3. **Results screen** — Final score with percentage, a visual list of every missed kana with your wrong answer crossed out, and buttons to retry the same set or go back to selection.
 
+**Accuracy tracking:**
+
+The app remembers your last 5 attempts for every kana (persisted via `localStorage`) and surfaces it two ways on the select screen:
+
+- Each kana card shows a percentage badge and a red→yellow→green background reflecting its recent accuracy (gray for kana you haven't attempted yet).
+- A collapsible sidebar on the left shows a combined accuracy percentage for a filterable set of kana (all / hiragana only / katakana only / your current selection), with an "include unattempted kana" toggle. Its filter is independent of a matching set of filter buttons above the main grid, so you can, for example, view only katakana cards while the sidebar summarizes accuracy across all kana.
+
 **Answer checking** accepts both standard Hepburn romanization and common alternatives:
 
 | Kana | Accepted answers |
@@ -137,9 +144,15 @@ kana-app/
 │   │       ├── hooks/
 │   │       │   ├── useQuizEngine.ts          # Quiz logic (shuffle, check, score)
 │   │       │   ├── useQuizEngine.test.ts     # Vitest tests
-│   │       │   └── usePersistedSelection.ts  # localStorage selection state
+│   │       │   ├── usePersistedSelection.ts  # localStorage selection state
+│   │       │   ├── useKanaHistory.ts         # localStorage per-kana accuracy history
+│   │       │   └── useKanaHistory.test.ts    # Vitest tests
+│   │       ├── utils/
+│   │       │   ├── accuracyColor.ts          # accuracy % -> color bucket mapping
+│   │       │   └── accuracyColor.test.ts     # Vitest tests
 │   │       ├── components/
 │   │       │   ├── KanaSelect.tsx  # Screen 1: kana selection grid
+│   │       │   ├── KanaSidebar.tsx # Screen 1: collapsible accuracy sidebar
 │   │       │   ├── Quiz.tsx        # Screen 2: quiz questions
 │   │       │   └── Results.tsx     # Screen 3: score summary
 │   │       ├── assets/
@@ -163,13 +176,13 @@ kana-app/
 - Typed romaji quiz with instant feedback
 - End-of-session score and missed-kana summary
 - Persistent selection via localStorage
+- Per-kana accuracy history across sessions (last 5 attempts), with a filterable sidebar summary and color-coded grid badges
 
 **Future versions:**
 - Spaced repetition / weighted retry of missed kana
 - Audio pronunciation
 - Stroke order / writing practice
 - Multiple quiz directions (romaji → kana)
-- Per-kana accuracy history across sessions
 - Vocabulary / word-level practice
 
 ---

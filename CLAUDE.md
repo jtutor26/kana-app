@@ -38,11 +38,14 @@ Both aliases are declared in `electron.vite.config.ts` (for the app) and `vitest
 
 ### Key files
 
-- `src/shared/types.ts` — shared TypeScript interfaces (`Kana`, `Screen`, `QuizResult`). Import from here in both hooks and components.
+- `src/shared/types.ts` — shared TypeScript interfaces (`Kana`, `Screen`, `QuizResult`, `KanaAttemptHistory`, `KanaStats`, `KanaFilter`). Import from here in both hooks and components.
 - `src/renderer/src/data/kana.ts` — static 208-entry kana dataset; the only source of truth for kana characters and their romaji. Each entry has an optional `altRomaji` array for accepted spelling variants.
 - `src/renderer/src/hooks/useQuizEngine.ts` — exports `useQuizEngine(selectedKana[])`, `checkAnswer(kana, input)`, and `normalizeInput(input)`. Quiz state lives here: shuffle, feedback, scoring. `checkAnswer` is the canonical answer-checking function — it matches against `romaji` and all `altRomaji` values, case-insensitively.
 - `src/renderer/src/hooks/usePersistedSelection.ts` — selection state backed by `localStorage` key `'kana-selection'`. Exposes `toggle`, `selectAll`, `clearAll`, `selectGroup`.
-- `src/renderer/src/App.tsx` — three-state router (`select` | `quiz` | `results`). Owns `selectedKana` and `quizResults` at the top level and passes them down.
+- `src/renderer/src/hooks/useKanaHistory.ts` — per-kana accuracy history backed by `localStorage` key `'kana-history'` (last 5 attempts per kana id). Exposes `recordQuizResults(results)` and `getKanaStats(id)`. Also exports the pure functions `pushAttempt`, `computeKanaStats`, and `computeCombinedAccuracy` used by both the grid cards and `KanaSidebar`.
+- `src/renderer/src/utils/accuracyColor.ts` — pure functions `bucketPct(pct)` and `accuracyClasses(pct)` mapping an accuracy percentage to one of 7 states (unattempted + 6 buckets of 20) and their Tailwind classes.
+- `src/renderer/src/components/KanaSidebar.tsx` — collapsible sidebar on the selection screen showing combined accuracy for a filterable set of kana (all/hiragana/katakana/selected), with an "include unattempted" toggle. Its filter is independent of the grid's own filter buttons in `KanaSelect.tsx`.
+- `src/renderer/src/App.tsx` — three-state router (`select` | `quiz` | `results`). Owns `selectedKana` and `quizResults` at the top level and passes them down. Calls `useKanaHistory().recordQuizResults(results)` in `handleFinish` to persist every completed quiz's outcomes.
 
 ### Screen flow
 
@@ -61,4 +64,4 @@ Tailwind CSS v4 — configured via the `@tailwindcss/vite` plugin (no `tailwind.
 
 ### Tests
 
-Unit tests cover `checkAnswer` and `normalizeInput` only — pure functions exported from `useQuizEngine.ts`. Hook behaviour (state transitions) is not tested. The test environment is jsdom (configured in `vitest.config.ts`).
+Unit tests cover pure functions only: `checkAnswer`/`normalizeInput` (`useQuizEngine.ts`), `pushAttempt`/`computeKanaStats`/`computeCombinedAccuracy` (`useKanaHistory.ts`), and `bucketPct`/`accuracyClasses` (`accuracyColor.ts`). Hook behaviour (state transitions) is not tested. The test environment is jsdom (configured in `vitest.config.ts`).
