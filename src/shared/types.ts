@@ -14,3 +14,13 @@ export interface QuizResult {
   userAnswer: string
   correct: boolean
 }
+
+export type KanaAttemptHistory = Record<string, boolean[]>
+
+export interface KanaStats {
+  attempts: number
+  correct: number
+  accuracyPct: number | null
+}
+
+export type KanaFilter = 'all' | 'hiragana' | 'katakana' | 'selected'
