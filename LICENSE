@@ -11,7 +11,7 @@ No other rights are granted. Specifically, without prior written permission
 from the copyright holder, you may NOT:
 
   - use this software, in whole or in part, in any other project or product
-  - copy, reproduce, or redistribute this software or any derivative of it
+  - copy, reproduce, or redistribute this software or any derivative of it (except as necessary to create a fork and prepare/submit a pull request as permitted above)
   - modify this software for any purpose other than submitting a pull
     request to this repository
   - publish, sublicense, sell, or otherwise make this software or any

@@ -4,7 +4,7 @@ Thanks for your interest in improving this project. Pull requests are welcome, b
 
 ## License and ownership
 
-This repository is **not open source** — see [LICENSE](./LICENSE). All code in this repository, including any code you contribute, is owned exclusively by the project maintainer (JT).
+This repository is **not open source** — see [LICENSE](./LICENSE). All original project code in this repository is owned by the project maintainer (Jonathan Tutor). By submitting a pull request, you grant the maintainer the license described below for your contribution.
 
 By submitting a pull request, you agree that:
 
