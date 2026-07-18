@@ -190,3 +190,7 @@ kana-app/
 ## Recommended IDE
 
 [VS Code](https://code.visualstudio.com/) with [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extensions installed.
+
+## License
+
+All rights reserved. This code is not open source — see [LICENSE](./LICENSE). Pull requests are welcome; see [CONTRIBUTING.md](./CONTRIBUTING.md) for terms before submitting one.
