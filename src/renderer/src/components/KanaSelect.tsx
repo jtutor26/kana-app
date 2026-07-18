@@ -49,7 +49,13 @@ export default function KanaSelect({ onStart }: KanaSelectProps) {
   }
 
   const visibleScripts: Kana['script'][] =
-    gridFilter === 'hiragana' ? ['hiragana'] : gridFilter === 'katakana' ? ['katakana'] : SCRIPTS
+    gridFilter === 'hiragana'
+      ? ['hiragana']
+      : gridFilter === 'katakana'
+        ? ['katakana']
+        : gridFilter === 'selected'
+          ? SCRIPTS.filter((s) => kanaData.some((k) => k.script === s && selectedIds.has(k.id)))
+          : SCRIPTS
 
   const showEmptySelectedState = gridFilter === 'selected' && count === 0
 

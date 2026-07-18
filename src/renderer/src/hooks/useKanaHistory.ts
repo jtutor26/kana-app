@@ -40,7 +40,11 @@ function loadHistory(): KanaAttemptHistory {
           (v) => Array.isArray(v) && v.every((b) => typeof b === 'boolean')
         )
       ) {
-        return parsed as KanaAttemptHistory
+        const trimmed: KanaAttemptHistory = {}
+        for (const [id, arr] of Object.entries(parsed)) {
+          trimmed[id] = (arr as boolean[]).slice(-MAX_ATTEMPTS)
+        }
+        return trimmed
       }
     }
   } catch {
@@ -50,7 +54,11 @@ function loadHistory(): KanaAttemptHistory {
 }
 
 function saveHistory(history: KanaAttemptHistory): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(history))
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history))
+  } catch {
+    // ignore storage write failures (quota, blocked storage, etc.)
+  }
 }
 
 interface UseKanaHistoryReturn {
@@ -62,22 +70,17 @@ interface UseKanaHistoryReturn {
 export function useKanaHistory(): UseKanaHistoryReturn {
   const [history, setHistory] = useState<KanaAttemptHistory>(loadHistory)
 
-  const update = useCallback((next: KanaAttemptHistory) => {
-    setHistory(next)
-    saveHistory(next)
-  }, [])
-
-  const recordQuizResults = useCallback(
-    (results: QuizResult[]) => {
-      const next: KanaAttemptHistory = { ...history }
+  const recordQuizResults = useCallback((results: QuizResult[]) => {
+    setHistory((prev) => {
+      const next: KanaAttemptHistory = { ...prev }
       for (const r of results) {
         const prevArr = next[r.kana.id] ?? []
         next[r.kana.id] = pushAttempt(prevArr, r.correct)
       }
-      update(next)
-    },
-    [history, update]
-  )
+      saveHistory(next)
+      return next
+    })
+  }, [])
 
   const getKanaStats = useCallback((id: string) => computeKanaStats(history[id]), [history])
 
